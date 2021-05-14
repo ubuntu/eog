@@ -82,11 +82,15 @@ parts:
     after: [librsvg]
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
+    source-tag: '40.1'
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
     meson-parameters: [--prefix=/usr, -Dintrospection=true, -Dlibportal=false]
     organize:
       snap/eog/current/usr: usr
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version $(git describe --tags --abbrev=10)
     override-build: |
       sed -i.bak -e 's|=org.gnome.eog$|=${SNAP}/meta/gui/org.gnome.eog.svg|g' data/org.gnome.eog.desktop.in.in
       sed -i.bak -e 's|media: media,|media: media, symlink_media: false,|g' help/meson.build
