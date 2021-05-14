@@ -1,19 +1,5 @@
-# How to use this template repository
-
-This is a template repository, meant to be copied to start a skeleton of other projects. This template provides a few things:
-- build workflow so that a snap is built automatically when a Pull Request (PR) is opened
-- PR template
-- README.md skeleton
-
-A bit about the README.md below:
-- Delete everything in this "How to use this template repository" (everything above the ==== line). 
-- Replace eog with the name of the snap (ex. eog).
-- Update any section starting with "TODO" to add the info requested, and remove the TODO line.
-
-========================================================================================
 # eog
 
-TODO: Add links to badges. Here's the eog badge links for example:
 *[![eog](https://snapcraft.io/eog/badge.svg)](https://snapcraft.io/eog)
 [![eog](https://snapcraft.io/eog/trending.svg?name=0)](https://snapcraft.io/eog)*
 
