@@ -2,7 +2,7 @@ name: eog
 adopt-info: eog
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
-base: core18
+base: core20
 
 layout:
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libpeas-1.0:
@@ -23,7 +23,7 @@ apps:
   eog:
     common-id: org.gnome.eog.desktop
     command: usr/bin/eog
-    extensions: [gnome-3-28]
+    extensions: [gnome-3-38]
     plugs:
       - home
       - gsettings
@@ -36,98 +36,55 @@ apps:
       PYTHONPATH: $SNAP/usr/lib/python3/dist-packages:$SNAP/gnome-platform/usr/lib/python3/dist-packages
       
 parts:
-  cairo:
-    source-branch: '1.16'
-    source: git://anongit.freedesktop.org/git/cairo
-    plugin: autotools
-    configflags:
-      - --prefix=/usr
-      - --enable-pdf
-      - --enable-ps
-      - --enable-xlib
-      - --enable-png
-      - --enable-tee
-      - --enable-svg
-      - --enable-perf-utils
-      - --disable-silent-rules
-      - --disable-maintainer-mode
-    build-packages:
-      - libfontconfig1-dev
-      - libfreetype6-dev
-      - libpixman-1-dev
-      - libpoppler-dev
-      - libx11-dev
-      - libxext-dev
-      - libxcb-render0-dev
-  librsvg:
-    after: [ cairo ]
-    source: https://gitlab.gnome.org/GNOME/librsvg.git
-    source-branch: librsvg-2.44
-    plugin: autotools
-    configflags: [ --prefix=/usr ]
-    build-packages:
-      - cargo
-      - libcroco3-dev
-      - libfreetype6-dev
-      - libgdk-pixbuf2.0-dev
-      - libgirepository1.0-dev
-      - libglib2.0-dev
-      - libgtk-3-dev
-      - libpango1.0-dev
-      - libxml2-dev
-      - rustc
-      - valac
   eog:
-    after: [librsvg]
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
     source-tag: '40.1'
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
-    meson-parameters: [--prefix=/usr, -Dintrospection=true, -Dlibportal=false]
+    meson-parameters: [--prefix=/usr, -Dintrospection=true, -Dlibportal=true]
     organize:
       snap/eog/current/usr: usr
     override-pull: |
       snapcraftctl pull
       snapcraftctl set-version $(git describe --tags --abbrev=10)
     override-build: |
-      sed -i.bak -e 's|=org.gnome.eog$|=${SNAP}/meta/gui/org.gnome.eog.svg|g' data/org.gnome.eog.desktop.in.in
-      sed -i.bak -e 's|media: media,|media: media, symlink_media: false,|g' help/meson.build
+      sed -i.bak -e 's|=org.gnome.eog$|=${SNAP}/meta/gui/org.gnome.eog.svg|g' $SNAPCRAFT_PART_SRC/data/org.gnome.eog.desktop.in.in
+      sed -i.bak -e 's|media: media,|media: media, symlink_media: false,|g' $SNAPCRAFT_PART_SRC/help/meson.build
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp ../src/data/icons/scalable/apps/org.gnome.eog.svg $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp snapbuild/data/org.gnome.eog.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
+      cp $SNAPCRAFT_PART_SRC/data/icons/scalable/apps/org.gnome.eog.svg $SNAPCRAFT_PART_INSTALL/meta/gui/
+      cp $SNAPCRAFT_PART_BUILD/data/org.gnome.eog.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
     build-packages:
-      - appstream-util
-      - desktop-file-utils
-      - gettext
-      - gnome-common
-      - gsettings-desktop-schemas-dev
-      - gobject-introspection
-      - gtk-doc-tools
-      - intltool
-      - libatk1.0-dev
       - libexempi-dev
       - libexif-dev
-      - libgdk-pixbuf2.0-dev
-      - libgirepository1.0-dev
-      - libglib2.0-dev
-      - libgnome-desktop-3-dev
-      - libgtk-3-dev
       - libjpeg-dev
       - liblcms2-dev
-      - libpeas-dev
-      - pkg-config
-      - shared-mime-info
-      - valac
-      - yelp-tools
       - zlib1g-dev
+      # Work around a build issue with gnome-3-38-2004-sdk which is missing some libs needed for linking.
+      - libdbus-1-dev
+      - libmtdev1
+      - libwacom2
+      - libevdev2
 
   libraries:
+    after: [eog]
     plugin: nil
     stage-packages:
       - libexif12
-      - libexempi3
+      - libexempi8
     prime:
       - "usr/lib/*/libexif*"
       - "usr/lib/*/libexempi*"
+
+  # Find files provided by the base and platform snap and ensure they aren't
+  # duplicated in this snap
+  cleanup:
+    after: [libraries]
+    plugin: nil
+    build-snaps: [core20, gtk-common-themes, gnome-3-38-2004]
+    override-prime: |
+      set -eux
+      for snap in "core20" "gtk-common-themes" "gnome-3-38-2004"; do
+        cd "/snap/$snap/current" && find . -type f,l -name *.so.* -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+      done
