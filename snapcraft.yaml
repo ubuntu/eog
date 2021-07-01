@@ -1,5 +1,4 @@
 name: eog
-version: git
 adopt-info: eog
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
