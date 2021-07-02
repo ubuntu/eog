@@ -61,11 +61,6 @@ parts:
       - libjpeg-dev
       - liblcms2-dev
       - zlib1g-dev
-      # Work around a build issue with gnome-3-38-2004-sdk which is missing some libs needed for linking.
-      - libdbus-1-dev
-      - libmtdev1
-      - libwacom2
-      - libevdev2
 
   libraries:
     after: [eog]
