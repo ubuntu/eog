@@ -43,6 +43,7 @@ parts:
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
     meson-parameters: [--prefix=/snap/eog/current/usr, -Dintrospection=true, -Dlibportal=true]
+    meson-version: 0.58.1
     organize:
       snap/eog/current/usr: usr
     override-pull: |
