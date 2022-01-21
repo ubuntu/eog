@@ -39,7 +39,7 @@ parts:
   eog:
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
-    source-tag: '40.2'
+    source-tag: '41.1'
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
     meson-parameters: [--prefix=/snap/eog/current/usr, -Dintrospection=true, -Dlibportal=true]
