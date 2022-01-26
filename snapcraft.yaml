@@ -36,13 +36,15 @@ apps:
       PYTHONPATH: $SNAP/usr/lib/python3/dist-packages:$SNAP/gnome-platform/usr/lib/python3/dist-packages
       
 parts:
+
   eog:
+    #after: [ libportal ]
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
     source-tag: '40.2'
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
-    meson-parameters: [--prefix=/snap/eog/current/usr, -Dintrospection=true, -Dlibportal=true]
+    meson-parameters: [--prefix=/snap/eog/current/usr, -Dintrospection=true, -Dlibportal=false]
     meson-version: 0.58.1
     organize:
       snap/eog/current/usr: usr
@@ -62,6 +64,8 @@ parts:
       - libjpeg-dev
       - liblcms2-dev
       - zlib1g-dev
+    build-environment:
+      - XDG_DATA_DIRS: $SNAPCRAFT_STAGE/usr/share:/usr/share:$XDG_DATA_DIRS
 
   libraries:
     after: [eog]
