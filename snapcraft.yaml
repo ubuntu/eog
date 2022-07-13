@@ -2,13 +2,13 @@ name: eog
 adopt-info: eog
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
-base: core20
+base: core22
 
 layout:
-  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libpeas-1.0:
-    bind: $SNAP/gnome-platform/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libpeas-1.0
-  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/eog:
-    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/eog
+  /usr/lib/$CRAFT_ARCH_TRIPLET/libpeas-1.0:
+    bind: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET/libpeas-1.0
+  /usr/lib/$CRAFT_ARCH_TRIPLET/eog:
+    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/eog
   /usr/share/eog:
     bind: $SNAP/usr/share/eog
 
@@ -23,7 +23,7 @@ apps:
   eog:
     common-id: org.gnome.eog.desktop
     command: usr/bin/eog
-    extensions: [gnome-3-38]
+    extensions: [gnome]
     plugs:
       - home
       - gsettings
@@ -31,41 +31,41 @@ apps:
       - mount-observe
       - removable-media
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/eog:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/eog
-      GI_TYPELIB_PATH: $SNAP/usr/lib/eog/girepository-1.0:$SNAP/usr/lib/girepository-1.0:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/girepository-1.0:$SNAP/gnome-platform/usr/lib/girepository-1.0:$SNAP/gnome-platform/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/girepository-1.0
+      LD_LIBRARY_PATH: :$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET:$SNAP/usr/lib/eog:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/eog
+      GI_TYPELIB_PATH: $SNAP/usr/lib/eog/girepository-1.0:$SNAP/usr/lib/girepository-1.0:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/girepository-1.0:$SNAP/gnome-platform/usr/lib/girepository-1.0:$SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET/girepository-1.0
       PYTHONPATH: $SNAP/usr/lib/python3/dist-packages:$SNAP/gnome-platform/usr/lib/python3/dist-packages
-      
-parts:
 
+parts:
   eog:
-    #after: [ libportal ]
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
-    source-tag: '41.1'
+    source-tag: '42.2'
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
-    meson-parameters: [--prefix=/snap/eog/current/usr, -Dintrospection=true, -Dlibportal=false]
-    meson-version: 0.58.1
-    organize:
-      snap/eog/current/usr: usr
+    meson-parameters:
+      - --prefix=/usr
+      - --buildtype=release
+      - -Dintrospection=true
+      - -Dlibportal=false
     override-pull: |
-      snapcraftctl pull
-      snapcraftctl set-version $(git describe --tags --abbrev=10)
+      craftctl default
+      craftctl set version=$(git describe --tags --abbrev=10)
     override-build: |
-      sed -i.bak -e 's|=org.gnome.eog$|=${SNAP}/meta/gui/org.gnome.eog.svg|g' $SNAPCRAFT_PART_SRC/data/org.gnome.eog.desktop.in.in
-      sed -i.bak -e 's|media: media,|media: media, symlink_media: false,|g' $SNAPCRAFT_PART_SRC/help/meson.build
-      snapcraftctl build
-      mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp $SNAPCRAFT_PART_SRC/data/icons/scalable/apps/org.gnome.eog.svg $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp $SNAPCRAFT_PART_BUILD/data/org.gnome.eog.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
+      sed -i.bak -e 's|=org.gnome.eog$|=${SNAP}/meta/gui/org.gnome.eog.svg|g' $CRAFT_PART_SRC/data/org.gnome.eog.desktop.in.in
+      sed -i.bak -e 's|media: media,|media: media, symlink_media: false,|g' $CRAFT_PART_SRC/help/meson.build
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/meta/gui/
+      cp $CRAFT_PART_SRC/data/icons/scalable/apps/org.gnome.eog.svg $CRAFT_PART_INSTALL/meta/gui/
+      cp $CRAFT_PART_BUILD/data/org.gnome.eog.desktop $CRAFT_PART_INSTALL/meta/gui/
     build-packages:
       - libexempi-dev
       - libexif-dev
       - libjpeg-dev
       - liblcms2-dev
       - zlib1g-dev
+      - python3-distutils
     build-environment:
-      - XDG_DATA_DIRS: $SNAPCRAFT_STAGE/usr/share:/usr/share:$XDG_DATA_DIRS
+      - XDG_DATA_DIRS: $CRAFT_STAGE/usr/share:/usr/share:$XDG_DATA_DIRS
 
   libraries:
     after: [eog]
@@ -82,9 +82,9 @@ parts:
   cleanup:
     after: [libraries]
     plugin: nil
-    build-snaps: [core20, gtk-common-themes, gnome-3-38-2004]
+    build-snaps: [core22, gtk-common-themes, gnome-42-2204]
     override-prime: |
       set -eux
-      for snap in "core20" "gtk-common-themes" "gnome-3-38-2004"; do
-        cd "/snap/$snap/current" && find . -type f,l -name *.so.* -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+      for snap in "core22" "gtk-common-themes" "gnome-42-2204"; do
+        cd "/snap/$snap/current" && find . -type f,l -name *.so.* -exec rm -f "$CRAFT_PRIME/{}" \;
       done
