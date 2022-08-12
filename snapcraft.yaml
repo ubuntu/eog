@@ -56,7 +56,6 @@ parts:
       craftctl default
       mkdir -p $CRAFT_PART_INSTALL/meta/gui/
       cp $CRAFT_PART_SRC/data/icons/scalable/apps/org.gnome.eog.svg $CRAFT_PART_INSTALL/meta/gui/
-      cp $CRAFT_PART_BUILD/data/org.gnome.eog.desktop $CRAFT_PART_INSTALL/meta/gui/
     build-packages:
       - libexempi-dev
       - libexif-dev
