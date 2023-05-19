@@ -39,7 +39,7 @@ parts:
   eog:
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
-    source-tag: '44.0'
+    source-tag: '44.1'
     source-depth: 1
 # ext:updatesnap
 #   version-format:
