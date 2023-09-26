@@ -68,6 +68,7 @@ parts:
       - liblcms2-dev
       - zlib1g-dev
       - python3-distutils
+      - libsystemd-dev
     build-environment:
       - XDG_DATA_DIRS: $CRAFT_STAGE/usr/share:/usr/share:$XDG_DATA_DIRS
 
