@@ -40,11 +40,11 @@ parts:
   eog:
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
-    source-tag: '45.3'
+    source-tag: '47.0'
     source-depth: 1
 # ext:updatesnap
 #   version-format:
-#     lower-than: '46'
+#     lower-than: '48'
 #     no-9x-revisions: true
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
