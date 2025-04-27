@@ -27,8 +27,6 @@ apps:
     extensions: [gnome]
     plugs:
       - home
-      - gsettings
-      - network
       - mount-observe
       - removable-media
     environment:
