@@ -50,11 +50,11 @@ parts:
       - --prefix=/usr
       - --buildtype=release
       - -Dintrospection=true
-      - -Dlibportal=false
     override-pull: |
       craftctl default
       craftctl set version=$(git describe --tags --abbrev=10)
     override-build: |
+      sed -i 's|g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);|TRUE;|g' $CRAFT_PART_SRC/src/eog-util.c
       sed -i.bak -e 's|=org.gnome.eog$|=${SNAP}/meta/gui/org.gnome.eog.svg|g' $CRAFT_PART_SRC/data/org.gnome.eog.desktop.in.in
       sed -i.bak -e 's|media: media,|media: media, symlink_media: false,|g' $CRAFT_PART_SRC/help/meson.build
       craftctl default
