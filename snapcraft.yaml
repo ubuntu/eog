@@ -1,4 +1,8 @@
 name: eog
+summary: Eye of Gnome
+description: |
+  Eye of Gnome is an image viewer for Gnome
+
 adopt-info: eog
 license: "GPL-3.0+"
 grade: stable # must be 'stable' to release into candidate/stable channels
@@ -6,10 +10,10 @@ confinement: strict
 base: core24
 
 layout:
-  /usr/lib/$CRAFT_ARCH_TRIPLET/libpeas-1.0:
-    bind: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET/libpeas-1.0
-  /usr/lib/$CRAFT_ARCH_TRIPLET/eog:
-    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/eog
+  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libpeas-1.0:
+    bind: $SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libpeas-1.0
+  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/eog:
+    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/eog
   /usr/share/eog:
     bind: $SNAP/usr/share/eog
 
@@ -30,20 +34,16 @@ apps:
       - mount-observe
       - removable-media
     environment:
-      LD_LIBRARY_PATH: :$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET:$SNAP/usr/lib/eog:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/eog
-      GI_TYPELIB_PATH: $SNAP/usr/lib/eog/girepository-1.0:$SNAP/usr/lib/girepository-1.0:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/girepository-1.0:$SNAP/gnome-platform/usr/lib/girepository-1.0:$SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET/girepository-1.0
+      LD_LIBRARY_PATH: :$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/eog:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/eog
+      GI_TYPELIB_PATH: $SNAP/usr/lib/eog/girepository-1.0:$SNAP/usr/lib/girepository-1.0:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/girepository-1.0:$SNAP/gnome-platform/usr/lib/girepository-1.0:$SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/girepository-1.0
       PYTHONPATH: $SNAP/usr/lib/python3/dist-packages:$SNAP/gnome-platform/usr/lib/python3/dist-packages
 
 parts:
   eog:
     source: https://gitlab.gnome.org/GNOME/eog.git
     source-type: git
-    source-tag: '47.0'
+    source-tag: '49.1'
     source-depth: 1
-# ext:updatesnap
-#   version-format:
-#     lower-than: '48'
-#     no-9x-revisions: true
     parse-info: [usr/share/metainfo/eog.appdata.xml]
     plugin: meson
     meson-parameters:
